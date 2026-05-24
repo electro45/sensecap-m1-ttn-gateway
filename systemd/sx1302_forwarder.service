@@ -1,0 +1,34 @@
+[Unit]
+Description=LoRaWAN SX1302 Packet Forwarder (TTN)
+Documentation=https://github.com/Lora-net/sx1302_hal
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/usr/local/bin
+
+# Reset du concentrateur avant démarrage
+ExecStartPre=/usr/local/bin/reset_lgw.sh start
+
+# Lancement du packet forwarder
+ExecStart=/usr/local/bin/lora_pkt_fwd -c /etc/sx1302_ttn/global_conf.json
+
+# Reset à l'arrêt pour laisser le matériel dans un état propre
+ExecStopPost=/usr/local/bin/reset_lgw.sh stop
+
+Restart=always
+RestartSec=10
+TimeoutStartSec=30
+TimeoutStopSec=15
+
+# Journalisation
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sx1302_forwarder
+
+[Install]
+WantedBy=multi-user.target

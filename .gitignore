@@ -1,0 +1,36 @@
+# Fichiers objets et dépendances de compilation sx1302_hal
+*.o
+*.d
+*.a
+
+# Binaires compilés
+/opt/sx1302_hal/
+sx1302_hal/
+
+# Binaires du packet forwarder
+lora_pkt_fwd
+chip_id
+lgw_reg
+net_downlink
+packet_gen
+payload_checker
+spectral_scan
+test_loragw_*
+
+# Logs du forwarder
+loragw_hal.log
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.swp
+*~
+
+# Fichiers de configuration locaux avec EUI ou clés
+local_conf.json
+station.conf
+
+# Archives
+*.tar.gz
+*.zip

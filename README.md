@@ -58,7 +58,7 @@ Recyclez votre ancien hotspot **SenseCAP M1** (ex-réseau Helium) en **gateway L
 Un script `install.sh` est disponible pour automatiser les étapes 3 à 6 :
 
 ```bash
-git clone https://github.com/votre-utilisateur/sensecap-m1-ttn-gateway.git
+git clone https://github.com/electro45/sensecap-m1-ttn-gateway.git
 cd sensecap-m1-ttn-gateway
 chmod +x scripts/install.sh
 sudo bash scripts/install.sh

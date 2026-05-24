@@ -113,7 +113,7 @@ Section à vérifier :
 }
 ```
 
-> Le champ `gateway_ID` est **automatiquement écrasé** par l'EUI réel du concentrateur au démarrage du forwarder — vous pouvez laisser la valeur par défaut.
+> ⚠️ Le champ `gateway_ID` **n'est pas automatiquement écrasé** par le forwarder — il utilise la valeur du fichier telle quelle. Le placeholder `AA555A0000000000` doit être remplacé par l'EUI réel du concentrateur (voir étape 04), sinon la gateway restera rouge dans la console TTN même si le forwarder reçoit des PUSH_ACK de TTN.
 
 ---
 

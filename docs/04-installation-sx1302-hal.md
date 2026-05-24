@@ -79,22 +79,35 @@ ls -la tools/reset_lgw.sh
 
 ## Étape 4 : Configurer le script de reset GPIO
 
-Le script `reset_lgw.sh` pilote les GPIOs de reset du concentrateur. Il faut l'adapter au SenseCAP M1.
+Le script `reset_lgw.sh` pilote les GPIOs de reset du concentrateur via l'interface sysfs.
 
-Copiez le script du dépôt courant :
+> ⚠️ **Kernel 6.x (Raspberry Pi OS Trixie/Bookworm) — offset GPIO**
+> Sur les kernels récents, le sous-système GPIO affecte un numéro de base non nul au chip BCM.
+> Vérifiez avec : `cat /sys/class/gpio/gpiochip*/base | sort -n | head -1`
+> Sur kernel 6.x avec RPi4 : le résultat est **512**. Le GPIO BCM 17 correspond donc au numéro sysfs **529** (512+17).
+> Le script fourni dans ce dépôt **détecte automatiquement ce base offset** — ne modifiez pas les numéros BCM.
+
+Copiez le script du dépôt (il gère automatiquement l'offset) :
 
 ```bash
 cp /chemin/vers/sensecap-m1-ttn-gateway/scripts/reset_lgw.sh tools/reset_lgw.sh
 chmod +x tools/reset_lgw.sh
 ```
 
-Ou éditez manuellement `tools/reset_lgw.sh` pour que les variables correspondent :
+Les GPIOs BCM configurés pour le SenseCAP M1 :
 
 ```bash
-SX1302_RESET_PIN=17
-SX1302_POWER_EN_PIN=18
-SX1261_RESET_PIN=5
-AD5338R_RESET_PIN=13
+SX1302_RESET_PIN=17       # Reset concentrateur SX1302
+SX1302_POWER_EN_PIN=18    # Power enable module RF
+SX1261_RESET_PIN=5        # Reset SX1261 (LBT / spectral scan)
+AD5338R_RESET_PIN=13      # Reset DAC AD5338R
+```
+
+Testez le reset manuellement :
+
+```bash
+sudo /usr/local/bin/reset_lgw.sh start
+# Attendu : "resetting concentrator (GPIO base=512)... done"
 ```
 
 ---
@@ -112,24 +125,36 @@ cp /chemin/vers/sensecap-m1-ttn-gateway/config/global_conf.json.sx1250.EU868.ttn
 
 ---
 
-## Étape 6 : Premier test — récupération de l'EUI
+## Étape 6 : Premier test — récupération et injection de l'EUI
 
 L'EUI concentrateur (identifiant unique de la gateway) se lit dans la sortie du forwarder au démarrage.
 
+> ⚠️ **Important — lancer depuis `/usr/local/bin`**
+> Le forwarder appelle `./reset_lgw.sh` en chemin **relatif**. Il doit être lancé depuis le répertoire où se trouve le script, sinon il échoue avec `failed to reset SX1302`.
+
 ```bash
-cd packet_forwarder
-sudo ./lora_pkt_fwd
+cd /usr/local/bin
+sudo ./lora_pkt_fwd -c /etc/sx1302_ttn/global_conf.json 2>&1 | grep -i EUI
 ```
 
-Cherchez dans la sortie une ligne comme :
+Résultat attendu :
 
 ```
-INFO: concentrator EUI: 0x58A0CBFFFE______
+INFO: concentrator EUI: 0x0016c001ff16e5ca
 ```
 
 > **Notez cet EUI** — vous en aurez besoin pour enregistrer la gateway sur TTN (étape 05).
 
-Arrêtez le forwarder avec **Ctrl+C** une fois l'EUI récupéré.
+> ⚠️ **Important — mettre à jour `gateway_ID` dans la configuration**
+> Le fichier `global_conf.json` contient un placeholder `AA555A0000000000` comme `gateway_ID`. Si vous ne le remplacez pas par l'EUI réel, la gateway apparaîtra connectée côté forwarder mais restera **rouge (jamais connectée) dans la console TTN** — TTN ne reconnaîtra pas les paquets UDP entrants.
+>
+> Injectez l'EUI réel (remplacez `0016C001FF16E5CA` par le vôtre) :
+> ```bash
+> sudo sed -i 's/AA555A0000000000/0016C001FF16E5CA/' /etc/sx1302_ttn/global_conf.json
+> ```
+> Le script `install.sh` effectue cette substitution automatiquement.
+
+Arrêtez le forwarder avec **Ctrl+C** une fois l'EUI récupéré et la config mise à jour.
 
 ---
 

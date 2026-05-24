@@ -21,6 +21,10 @@ test_loragw_*
 loragw_hal.log
 *.log
 
+# Variables d'environnement locales (credentials)
+.env
+.env.*
+
 # Fichiers temporaires
 *.tmp
 *.bak

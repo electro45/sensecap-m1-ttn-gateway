@@ -211,3 +211,11 @@ vcgencmd measure_temp
 ---
 
 Votre **SenseCAP M1 est désormais une gateway LoRaWAN publique TTN opérationnelle**. Elle reçoit les trames des objets LoRaWAN à portée et les remonte vers le réseau TTN, contribuant à la couverture communautaire.
+
+---
+
+## Étape suivante (optionnelle)
+
+Pour ajouter un réseau **ChirpStack privé local** en parallèle de TTN (sans rien changer à la configuration TTN) :
+
+Passez à [07 — Packet Multiplexer](07-packet-multiplexer.md).

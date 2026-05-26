@@ -90,8 +90,13 @@ log "global_conf.json : server_address → 127.0.0.1 (multiplexeur)"
 # chirpstack-gateway-bridge : écouter sur :1701 (le mux prend le :1700)
 BRIDGE_CONF="/etc/chirpstack-gateway-bridge/chirpstack-gateway-bridge.toml"
 if [[ -f "$BRIDGE_CONF" ]]; then
+    # Port : le mux prend le :1700, le bridge écoute sur :1701
     sed -i 's/udp_bind = "0.0.0.0:1700"/udp_bind = "0.0.0.0:1701"/' "$BRIDGE_CONF"
     log "chirpstack-gateway-bridge : UDP bind → :1701"
+    # Topics MQTT : ajouter le préfixe région eu868/ attendu par ChirpStack v4
+    sed -i 's|event_topic_template="gateway/|event_topic_template="eu868/gateway/|' "$BRIDGE_CONF"
+    sed -i 's|command_topic_template="gateway/|command_topic_template="eu868/gateway/|' "$BRIDGE_CONF"
+    log "chirpstack-gateway-bridge : topics MQTT → eu868/gateway/..."
 else
     warn "Config Gateway Bridge non trouvée à $BRIDGE_CONF — vérifiez manuellement"
 fi

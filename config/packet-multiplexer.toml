@@ -1,18 +1,17 @@
 # ChirpStack Packet Multiplexer — SenseCAP M1 EU868
 # Reçoit les trames UDP de lora_pkt_fwd (port 1700)
-# et les redistribue vers plusieurs backends en parallèle.
+# et les redistribue vers plusieurs serveurs en parallèle.
 
 [logging]
 level = "info"
 
 [multiplexer]
-# Le forwarder (lora_pkt_fwd) envoie ses trames ici
 bind = "0.0.0.0:1700"
 
   # Backend 1 : The Things Network (EU1)
-  [[multiplexer.backends]]
-  host = "eu1.cloud.thethings.network:1700"
+  [[multiplexer.server]]
+  server = "eu1.cloud.thethings.network:1700"
 
   # Backend 2 : ChirpStack Gateway Bridge (local, port 1701)
-  [[multiplexer.backends]]
-  host = "127.0.0.1:1701"
+  [[multiplexer.server]]
+  server = "127.0.0.1:1701"

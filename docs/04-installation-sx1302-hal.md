@@ -90,7 +90,7 @@ Le script `reset_lgw.sh` pilote les GPIOs de reset du concentrateur via l'interf
 Copiez le script du dépôt (il gère automatiquement l'offset) :
 
 ```bash
-cp /chemin/vers/sensecap-m1-ttn-gateway/scripts/reset_lgw.sh tools/reset_lgw.sh
+cp /chemin/vers/sensecap-m1-lorawan-gateway/scripts/reset_lgw.sh tools/reset_lgw.sh
 chmod +x tools/reset_lgw.sh
 ```
 
@@ -117,7 +117,7 @@ sudo /usr/local/bin/reset_lgw.sh start
 Copiez le fichier de configuration depuis ce dépôt vers le répertoire du forwarder :
 
 ```bash
-cp /chemin/vers/sensecap-m1-ttn-gateway/config/global_conf.json.sx1250.EU868.ttn \
+cp /chemin/vers/sensecap-m1-lorawan-gateway/config/global_conf.json.sx1250.EU868.ttn \
    packet_forwarder/global_conf.json
 ```
 

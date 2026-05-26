@@ -92,7 +92,7 @@ Le service systemd permet au forwarder de démarrer automatiquement au boot et d
 ### 3a — Copier le fichier service
 
 ```bash
-sudo cp /chemin/vers/sensecap-m1-ttn-gateway/systemd/sx1302_forwarder.service \
+sudo cp /chemin/vers/sensecap-m1-lorawan-gateway/systemd/sx1302_forwarder.service \
         /etc/systemd/system/sx1302_forwarder.service
 ```
 

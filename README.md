@@ -79,6 +79,14 @@ sudo bash scripts/install.sh
 sudo bash scripts/setup-chirpstack.sh
 ```
 
+### Phase 3 — Durcissement sécurité (recommandé)
+
+```bash
+sudo bash scripts/harden.sh
+```
+
+Révoque le sudo NOPASSWD, active l'auth Redis, désactive l'auth SSH par mot de passe (si une clé SSH est déjà déposée), installe fail2ban.
+
 > Les scripts doivent être exécutés sur le Raspberry Pi lui-même, **pas sur votre machine hôte**.
 
 ---

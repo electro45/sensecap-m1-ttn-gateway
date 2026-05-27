@@ -117,9 +117,18 @@ log "Mosquitto configuré (accès anonyme local)"
 echo ""
 info "Étape 5/5 — Initialisation PostgreSQL et démarrage des services..."
 
+# Générer un mot de passe aléatoire pour l'utilisateur PostgreSQL
+CS_DB_PASS=$(openssl rand -base64 24 | tr -dc 'a-zA-Z0-9' | head -c 32)
+
 sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='chirpstack'" \
     | grep -q 1 || \
-    sudo -u postgres psql -c "CREATE ROLE chirpstack WITH LOGIN PASSWORD 'chirpstack';"
+    sudo -u postgres psql -c "CREATE ROLE chirpstack WITH LOGIN PASSWORD '${CS_DB_PASS}';"
+
+# Stocker le mot de passe pour que ChirpStack puisse s'y connecter
+CS_TOML="/etc/chirpstack/chirpstack.toml"
+if [[ -f "$CS_TOML" ]]; then
+    sed -i "s|postgresql://chirpstack:chirpstack@|postgresql://chirpstack:${CS_DB_PASS}@|g" "$CS_TOML"
+fi
 
 sudo -u postgres psql -tc "SELECT 1 FROM pg_database WHERE datname='chirpstack'" \
     | grep -q 1 || \
@@ -148,6 +157,10 @@ echo "  Interface ChirpStack :"
 IP=$(hostname -I | awk '{print $1}')
 echo "  http://${IP}:8080"
 echo "  Login par défaut : admin / admin"
+echo ""
+echo -e "${RED}  ⚠️  SÉCURITÉ — À faire immédiatement :${NC}"
+echo "  Changez le mot de passe admin ChirpStack après la première connexion :"
+echo "  Profil (en haut à droite) → Change password"
 echo ""
 echo "  Flux des données :"
 echo "  lora_pkt_fwd → multiplexeur:1700"

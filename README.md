@@ -61,6 +61,12 @@ Recyclez votre ancien hotspot **SenseCAP M1** (ex-réseau Helium) en **gateway L
 | 7 | [07 — Packet Multiplexer](docs/07-packet-multiplexer.md) | Diffuser les trames vers TTN + ChirpStack simultanément |
 | 8 | [08 — ChirpStack v4](docs/08-chirpstack.md) | Réseau LoRaWAN privé local, interface web :8080 |
 
+### Phase 3 — Durcissement sécurité (étape 09)
+
+| # | Fichier | Description |
+|---|---------|-------------|
+| 9 | [09 — Sécurité](docs/09-securite.md) | SSH par clé, Redis auth, fail2ban, sudo NOPASSWD révoqué |
+
 ---
 
 ## Installation rapide (script automatisé)
@@ -82,10 +88,12 @@ sudo bash scripts/setup-chirpstack.sh
 ### Phase 3 — Durcissement sécurité (recommandé)
 
 ```bash
+# Déposer d'abord votre clé SSH publique
+ssh-copy-id -i ~/.ssh/id_ed25519.pub gateway@<IP>
+
+# Puis lancer le script
 sudo bash scripts/harden.sh
 ```
-
-Révoque le sudo NOPASSWD, active l'auth Redis, désactive l'auth SSH par mot de passe (si une clé SSH est déjà déposée), installe fail2ban.
 
 > Les scripts doivent être exécutés sur le Raspberry Pi lui-même, **pas sur votre machine hôte**.
 
@@ -110,7 +118,7 @@ lora_pkt_fwd → packet-multiplexer:1700
 ```
 
 - TTN reste connectée (gateway toujours verte)
-- ChirpStack accessible en local sur `:8080` (login `admin` / `admin` à changer)
+- ChirpStack accessible en local sur `:8080`
 - Vos propres capteurs LoRaWAN enregistrables et décodables localement
 
 ---
@@ -128,17 +136,18 @@ sensecap-m1-lorawan-gateway/
 │   ├── 05-configuration-ttn.md
 │   ├── 06-tests-verification.md
 │   ├── 07-packet-multiplexer.md       ← Phase 2
-│   └── 08-chirpstack.md               ← Phase 2
+│   ├── 08-chirpstack.md               ← Phase 2
+│   └── 09-securite.md                 ← Phase 3
 ├── config/
 │   ├── global_conf.json.sx1250.EU868.ttn
-│   └── packet-multiplexer.toml        ← Phase 2
+│   └── packet-multiplexer.toml
 ├── scripts/
 │   ├── install.sh                     ← Phase 1
 │   ├── setup-chirpstack.sh            ← Phase 2
+│   ├── harden.sh                      ← Phase 3
 │   └── reset_lgw.sh
 └── systemd/
-    ├── sx1302_forwarder.service
-    └── packet-multiplexer.service     ← Phase 2
+    └── sx1302_forwarder.service
 ```
 
 ---
